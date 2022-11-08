@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # rise_template
 Create template cells in JupyterLab
 =======
@@ -98,4 +97,4 @@ More information are provided within the [ui-tests](./ui-tests/README.md) README
 ### Packaging the extension
 
 See [RELEASE](RELEASE.md)
->>>>>>> 83222b4 (Add menu bar)
+
