@@ -1,2 +1,2 @@
-# jupyterlab_template
+# rise_template
 Create template cells in JupyterLab
