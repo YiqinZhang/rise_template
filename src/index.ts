@@ -7,7 +7,8 @@ import { ICommandPalette } from '@jupyterlab/apputils';
 import { INotebookTracker, NotebookActions } from '@jupyterlab/notebook';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { Menu } from '@lumino/widgets';
-
+// import { ICommandPalette, MainAreaWidget } from '@jupyterlab/apputils';
+// import { Widget } from '@lumino/widgets';
 /**
  * Initialization data for the slide_layout extension.
  */
@@ -44,12 +45,26 @@ const plugin: JupyterFrontEndPlugin<void> = {
       execute: () => {
         const current = tracker.currentWidget;
         const notebook = current!.content;
+
         NotebookActions.insertBelow(notebook);
-        const activeCell = notebook.activeCell;
+        NotebookActions.changeCellType(notebook, 'markdown');
+        let activeCell = notebook.activeCell;
         activeCell!.model.value.text = '<hr>';
         NotebookActions.insertBelow(notebook);
-        activeCell!.model.value.text = '** Body **';
+        NotebookActions.changeCellType(notebook, 'markdown');
+        activeCell = notebook.activeCell;
+        activeCell!.model.value.text = '**BODY**';
         NotebookActions.insertBelow(notebook);
+
+        NotebookActions.insertBelow(notebook);
+        NotebookActions.changeCellType(notebook, 'markdown');
+        activeCell = notebook.activeCell;
+        activeCell!.model.value.text = '**NOTE**';
+
+        NotebookActions.insertBelow(notebook);
+        NotebookActions.changeCellType(notebook, 'markdown');
+        activeCell = notebook.activeCell;
+        activeCell!.model.value.text = '<hr>';
       }
     });
 
@@ -58,18 +73,28 @@ const plugin: JupyterFrontEndPlugin<void> = {
       caption: 'Image only',
       execute: () => {
         const current = tracker.currentWidget;
+        console.log(current!.context.model);
+
         const notebook = current!.content;
         NotebookActions.insertBelow(notebook);
         const activeCell = notebook.activeCell;
-        activeCell!.model.value.text = 'print(Image only)';
+        activeCell!.model.value.text = '# Image only';
+        
         NotebookActions.insertBelow(notebook);
         const img = document.createElement('img');
         activeCell!.node.appendChild(img);
         img.src = '<img src="../images/default.png" width = "100%">';
         img.title = 'default title';
-        const summary = document.createElement('p');
-        activeCell!.node.appendChild(summary);
-        summary.innerText += '<img src="../images/default.png" width = "100%">';
+        // const summary = document.createElement('p');
+        // activeCell!.node.appendChild(summary);
+        // summary.innerText += '<img src="../images/default.png" width = "100%">';
+
+        NotebookActions.insertBelow(notebook);
+        const activeCell5 = notebook.activeCell;
+        const image = document.createElement('img');
+        activeCell5!.node.appendChild(image);
+        img.src = '../images/default.png';
+        img.title = 'default image';
       }
     });
 
