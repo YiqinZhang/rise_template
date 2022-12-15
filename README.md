@@ -1,7 +1,5 @@
 # slide_layout
 
-[![Github Actions Status](https://github.com/YiqinZhang/rise_template.git/workflows/Build/badge.svg)](https://github.com/YiqinZhang/rise_template.git/actions/workflows/build.yml)
-
 
 Create customized rise slides template in JupyterLab
 
