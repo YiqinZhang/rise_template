@@ -7,11 +7,30 @@ import { ICommandPalette } from '@jupyterlab/apputils';
 import { INotebookTracker, NotebookActions } from '@jupyterlab/notebook';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { Menu } from '@lumino/widgets';
+import { Cell } from '@jupyterlab/cells';
 // import { ICommandPalette, MainAreaWidget } from '@jupyterlab/apputils';
 // import { Widget } from '@lumino/widgets';
 /**
  * Initialization data for the slide_layout extension.
  */
+
+function setCellSlide(cell: Cell | null, value: string | null): void {
+  if (cell) {
+    let data = cell.model.metadata.get('slideshow') || Object.create(null);
+    if (value === null) {
+      // Make a shallow copy so we aren't modifying the original metadata.
+      data = { ...data };
+      delete data.slide_type;
+    } else {
+      data = { ...data, slide_type: value };
+    }
+    if (Object.keys(data).length > 0) {
+      cell.model.metadata.set('slideshow', data);
+    } else {
+      cell.model.metadata.delete('slideshow');
+    }
+  }
+}
 
 const plugin: JupyterFrontEndPlugin<void> = {
   id: 'slide_layout:plugin',
@@ -45,26 +64,27 @@ const plugin: JupyterFrontEndPlugin<void> = {
       execute: () => {
         const current = tracker.currentWidget;
         const notebook = current!.content;
-
+        // add a body label
         NotebookActions.insertBelow(notebook);
         NotebookActions.changeCellType(notebook, 'markdown');
         let activeCell = notebook.activeCell;
-        activeCell!.model.value.text = '<hr>';
-        NotebookActions.insertBelow(notebook);
-        NotebookActions.changeCellType(notebook, 'markdown');
-        activeCell = notebook.activeCell;
         activeCell!.model.value.text = '**BODY**';
+        //set cell slidetype to skip
+        setCellSlide(activeCell, 'skip');
+        // add a BODY cell
         NotebookActions.insertBelow(notebook);
-
+        // add a NOTE cell
         NotebookActions.insertBelow(notebook);
         NotebookActions.changeCellType(notebook, 'markdown');
         activeCell = notebook.activeCell;
         activeCell!.model.value.text = '**NOTE**';
-
+        setCellSlide(activeCell, 'notes');
+        // add a dividing line
         NotebookActions.insertBelow(notebook);
         NotebookActions.changeCellType(notebook, 'markdown');
         activeCell = notebook.activeCell;
         activeCell!.model.value.text = '<hr>';
+        setCellSlide(activeCell, 'skip');
       }
     });
 
@@ -74,27 +94,35 @@ const plugin: JupyterFrontEndPlugin<void> = {
       execute: () => {
         const current = tracker.currentWidget;
         console.log(current!.context.model);
-
         const notebook = current!.content;
         NotebookActions.insertBelow(notebook);
-        const activeCell = notebook.activeCell;
+        NotebookActions.changeCellType(notebook, 'markdown');
+        let activeCell = notebook.activeCell;
         activeCell!.model.value.text = '# Image only';
-        
         NotebookActions.insertBelow(notebook);
+        NotebookActions.changeCellType(notebook, 'markdown');
+
         const img = document.createElement('img');
         activeCell!.node.appendChild(img);
         img.src = '<img src="../images/default.png" width = "100%">';
         img.title = 'default title';
-        // const summary = document.createElement('p');
-        // activeCell!.node.appendChild(summary);
-        // summary.innerText += '<img src="../images/default.png" width = "100%">';
+
+        const summary = document.createElement('p');
+        activeCell = notebook.activeCell;
+        activeCell!.node.appendChild(summary);
+        summary.innerText += '<img src="../images/default.png" width = "100%">';
 
         NotebookActions.insertBelow(notebook);
         const activeCell5 = notebook.activeCell;
         const image = document.createElement('img');
         activeCell5!.node.appendChild(image);
-        img.src = '../images/default.png';
-        img.title = 'default image';
+        image.src = '../images/default.png';
+        image.title = 'default image';
+
+        NotebookActions.insertBelow(notebook);
+        NotebookActions.changeCellType(notebook, 'markdown');
+        activeCell = notebook.activeCell;
+        activeCell!.model.value.text = '<hr>';
       }
     });
 
@@ -105,12 +133,25 @@ const plugin: JupyterFrontEndPlugin<void> = {
         const current = tracker.currentWidget;
         const notebook = current!.content;
         NotebookActions.insertBelow(notebook);
-        const activeCell = notebook.activeCell;
-        activeCell!.model.value.text = '%%html';
-        activeCell!.model.value.text += '<hr>';
-        NotebookActions.insertBelow(notebook);
+        NotebookActions.changeCellType(notebook, 'markdown');
+        let activeCell = notebook.activeCell;
         activeCell!.model.value.text = '# Title';
+
         NotebookActions.insertBelow(notebook);
+        NotebookActions.changeCellType(notebook, 'markdown');
+        activeCell = notebook.activeCell;
+        activeCell!.model.value.text = '**NOTE**';
+
+        NotebookActions.insertBelow(notebook);
+        NotebookActions.changeCellType(notebook, 'markdown');
+        activeCell = notebook.activeCell;
+        activeCell!.model.value.text =
+          '-a Note that will display in the notes view';
+
+        NotebookActions.insertBelow(notebook);
+        NotebookActions.changeCellType(notebook, 'markdown');
+        activeCell = notebook.activeCell;
+        activeCell!.model.value.text = '<hr>';
       }
     });
 
