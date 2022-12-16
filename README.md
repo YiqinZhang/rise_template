@@ -3,6 +3,10 @@
 
 Create customized rise slides template in JupyterLab
 
+![menu](/example/images/menu.png)
+
+
+
 ## Requirements
 
 - JupyterLab >= 3.0
